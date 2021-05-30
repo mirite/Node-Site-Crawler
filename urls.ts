@@ -1,13 +1,5 @@
-type TestGroup = {
-	input: String,
-	tests: Array<Test>,
-}
 
-type Test = {
-
-	function(url: String): String,
-	expected: String,
-}
+import {TestGroup, runTestGroups} from './tests';
 
 function findProtocol(url: String): String {
 	if (!url.includes("//")) return ``;
@@ -16,20 +8,8 @@ function findProtocol(url: String): String {
 	return url.substring(0, url.indexOf(`://`));
 }
 
-function runTestGroups(groups: Array<TestGroup>) {
-	groups.forEach(group => runTestGroup(group));
-}
-
-function runTestGroup(testGroup: TestGroup) {
-	testGroup.tests.forEach(test => {
-		runTest(testGroup.input, test);
-	});
-}
-
-function runTest(input: String, test: Test): boolean {
-	const output = test.function(input);
-	console.log(`${test.function.name}(${input}) returned ${output}`);
-	return output === test.expected;
+function runTests() {
+	runTestGroups(testStrings);
 }
 
 const testStrings:Array<TestGroup> = [
@@ -85,6 +65,7 @@ const testStrings:Array<TestGroup> = [
 	}
 ];
 
-runTestGroups(testStrings);
-
-module.exports = { findProtocol };
+export default  {
+	findProtocol,
+	runTests,
+};

@@ -1,1 +1,2 @@
-const URLTools = require('./urls');
+import URLTools from './urls';
+URLTools.runTests();
