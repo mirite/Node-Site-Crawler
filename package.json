@@ -1,0 +1,28 @@
+{
+  "name": "node-site-crawler",
+  "version": "1.0.0",
+  "description": "A node script to crawl a domain, find broken links, assets, and generate a page list. ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mirite/Node-Site-Crawler.git"
+  },
+  "keywords": [
+    "crawler",
+    "node",
+    "web",
+    "tools"
+  ],
+  "author": "Jesse Conner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mirite/Node-Site-Crawler/issues"
+  },
+  "homepage": "https://github.com/mirite/Node-Site-Crawler#readme",
+  "devDependencies": {
+    "typescript": "^4.3.2"
+  }
+}
