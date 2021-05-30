@@ -1,4 +1,3 @@
-
 import { TestGroup, runTestGroups } from './tests';
 
 function findProtocol(url: string): string {
@@ -18,8 +17,41 @@ function findDomain(url: string): string {
 	return output;
 }
 
+function findPath(url: string): string {
+	if (isOnPageAnchor(url)) return ``;
+	let output = removeDomain(url);
+	output = removeAnchor(output);
+	if (output === ``) return `/`;
+	return output;
+}
+
 function isRelative(url: string): boolean {
 	return findProtocol(url) === ``;
+}
+
+function isOnPageAnchor(url: string): boolean {
+	return url.substring(0, 1) === `#`;
+}
+
+function removeDomain(url: string): string {
+	let output = url;
+	const domain = findDomain(url);
+	//  console.log(url, domain);
+	if(domain) output = output.substring(url.indexOf(domain) + domain.length);
+	return output;
+}
+
+function removeAnchor(url: string): string {
+	if (!url.includes(`#`)) return url;
+	let output = url.substring(0, url.indexOf(`#`));
+	return output;
+}
+
+function isRoot(url: string): boolean {
+	if (isOnPageAnchor(url)) return false;
+	let bare = removeDomain(url);
+	bare = removeAnchor(bare);
+	return bare === `` || bare === `/`;
 }
 
 function runTests() {
@@ -38,6 +70,14 @@ const testStrings: Array<TestGroup> = [
 				function: findDomain,
 				expected: `jesseconner.ca`,
 			},
+			{
+				function: findPath,
+				expected: `/`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
 
 		],
 
@@ -51,7 +91,19 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: `somecdn`,
-		},
+			},
+			{
+				function: findPath,
+				expected: `asset.css`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
 		],
 	},
 	{
@@ -63,7 +115,19 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: `assets.somecdn`,
-		},
+			},
+			{
+				function: findPath,
+				expected: `asset.css`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
 		],
 	},
 	{
@@ -75,7 +139,19 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: `jesseconner.ca`,
-		},
+			},
+			{
+				function: findPath,
+				expected: `/`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: true,
+			},
 		],
 	},
 	{
@@ -87,7 +163,19 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: `127.0.0.1`,
-		},
+			},
+			{
+				function: findPath,
+				expected: `/`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: true,
+			},
 		],
 	},
 	{
@@ -99,7 +187,20 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: ``,
-		},],
+			},
+			{
+				function: findPath,
+				expected: `/index.html`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
 	},
 	{
 		input: '/',
@@ -110,30 +211,171 @@ const testStrings: Array<TestGroup> = [
 		{
 			function: findDomain,
 			expected: ``,
-		},],
+			},
+			{
+				function: findPath,
+				expected: `/`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: true,
+			},
+		],
 	},
 	{
 		input: `folder/index`,
-		tests: [{
-			function: findProtocol,
-			expected: ``,
-		},
-		{
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
 			function: findDomain,
 			expected: ``,
-		},],
+			},
+			{
+				function: findPath,
+				expected: `folder/index`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
 	},
 	{
 		input: `bad//relative`,
-		tests: [{
-			function: findProtocol,
-			expected: ``,
-		},
-		{
-			function: findDomain,
-			expected: ``,
-		},],
-	}
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
+				function: findDomain,
+				expected: ``,
+			},
+			{
+				function: findPath,
+				expected: `bad//relative`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
+	},
+	{
+		input: `#`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
+				function: findDomain,
+				expected: ``,
+			},
+			{
+				function: findPath,
+				expected: ``,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: true,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
+	},
+	{
+		input: `#somewhere`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
+				function: findDomain,
+				expected: ``,
+			},
+			{
+				function: findPath,
+				expected: ``,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: true,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
+	},
+	{
+		input: `http://localhost/#home`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: `http`,
+			},
+			{
+				function: findDomain,
+				expected: `localhost`,
+			},
+			{
+				function: findPath,
+				expected: `/`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: true,
+			},
+		],
+	},
+	{
+		input: `somefolder.php#home`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
+				function: findDomain,
+				expected: ``,
+			},
+			{
+				function: findPath,
+				expected: `somefolder.php`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+		],
+	},
 ];
 
 export default {

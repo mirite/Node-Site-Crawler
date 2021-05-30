@@ -1,12 +1,12 @@
 export type TestGroup = {
-	input: String,
+	input: string,
 	tests: Array<Test>,
 }
 
 export type Test = {
 
-	function(url: String): String,
-	expected: String,
+	function(url: string): string|boolean,
+	expected: string|boolean,
 }
 
 export function runTestGroups(groups: Array<TestGroup>) {
@@ -19,7 +19,7 @@ function runTestGroup(testGroup: TestGroup) {
 	});
 }
 
-function runTest(input: String, test: Test): void {
+function runTest(input: string, test: Test): void {
 	const output = test.function(input);
 	
 	if (output === test.expected) return;
