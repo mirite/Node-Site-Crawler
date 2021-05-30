@@ -25,6 +25,22 @@ function findPath(url: string): string {
 	return output;
 }
 
+function findFileName(url: string): string {
+	let output = findPath(url);
+	if (!output) return ``;
+	output = output.substring(output.lastIndexOf(`/`) + 1);
+	if (!output.includes(`.`)) return ``;
+	return output;
+}
+
+function findFileType(url: string): string {
+	let filename = findFileName(url);
+	if (!filename) return ``;
+	if (filename.includes(`?`)) filename = filename.substring(0, filename.indexOf(`?`));
+	const fileType = filename.substring(filename.indexOf(`.`) + 1);
+	return fileType;
+}
+
 function isRelative(url: string): boolean {
 	return findProtocol(url) === ``;
 }
@@ -78,6 +94,14 @@ const testStrings: Array<TestGroup> = [
 				function: isOnPageAnchor,
 				expected: false,
 			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			{
+				function: findFileType,
+				expected: ``,
+			},
 
 		],
 
@@ -104,6 +128,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: false,
 			},
+			{
+				function: findFileName,
+				expected: `asset.css`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `css`,
+			},
 		],
 	},
 	{
@@ -127,6 +160,15 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: `asset.css`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `css`,
 			},
 		],
 	},
@@ -152,6 +194,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: true,
 			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
+			},
 		],
 	},
 	{
@@ -175,6 +226,15 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: true,
+			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
 			},
 		],
 	},
@@ -200,6 +260,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: false,
 			},
+			{
+				function: findFileName,
+				expected: `index.html`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `html`,
+			},
 		],
 	},
 	{
@@ -223,6 +292,15 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: true,
+			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
 			},
 		],
 	},
@@ -249,6 +327,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: false,
 			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
+			},
 		],
 	},
 	{
@@ -273,6 +360,15 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
 			},
 		],
 	},
@@ -299,6 +395,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: false,
 			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
+			},
 		],
 	},
 	{
@@ -323,6 +428,15 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
 			},
 		],
 	},
@@ -349,6 +463,15 @@ const testStrings: Array<TestGroup> = [
 				function: isRoot,
 				expected: true,
 			},
+			{
+				function: findFileName,
+				expected: ``,
+			},
+			
+			{
+				function: findFileType,
+				expected: ``,
+			},
 		],
 	},
 	{
@@ -373,6 +496,49 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: `somefolder.php`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `php`,
+			},
+		],
+	},
+	{
+		input: `/path/someimage.png?size=1x1`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: ``,
+			},
+			{
+				function: findDomain,
+				expected: ``,
+			},
+			{
+				function: findPath,
+				expected: `/path/someimage.png?size=1x1`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: `someimage.png?size=1x1`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `png`,
 			},
 		],
 	},
