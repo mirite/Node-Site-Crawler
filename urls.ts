@@ -19,17 +19,43 @@ function findDomain(url: string): string {
 	return output;
 }
 
+function endURL(url: string): string {
+	if (!url.includes(`.`) && url.substring(url.length - 1) != `/`) return url + `/`;
+	return url;
+}
+
 function findPath(url: string): string {
 	if (isOnPageAnchor(url)) return ``;
 	let output = removeDomain(url);
 	output = removeAnchor(output);
 	if (output === ``) return `/`;
-	if (!output.includes(`.`) && output.substring(output.length-1) != `/`) output = output + `/`;
+	output = cleanPath(output)
 	return output;
 }
 
+function stripDoubles(url: string): string {
+	return url.replace(`//`, `/`);
+}
+
+function cleanPath(url: string) {
+	url = endURL(url);
+	url = stripDoubles(url);
+	url = removeAnchor(url);
+	return url;
+}
+
 function findPathFromRoot(url: string, sourcePage: string): string {
-	return sourcePage + url;
+	let output = ``;
+
+	let sourcePath = findPath(sourcePage);
+	
+	if ( sourcePath.substring(sourcePath.length - 1) != `/`) {
+		const fileName = findFileName(sourcePage);
+		sourcePath = sourcePath.replace(fileName, ``);
+	}
+	output = `/` + sourcePath + url;
+	output = cleanPath(output)
+	return output;
 }
 
 function findFileName(url: string): string {
@@ -85,6 +111,7 @@ function isRoot(url: string): boolean {
 
 function isInternal(url: string, domain: string): boolean {
 	if (isRelativeToRoot(url)) return true;
+	if (isRelativeToPage(url)) return true;
 	const linkDomain = findDomain(url);
 	return domain === linkDomain;
 }
@@ -93,7 +120,7 @@ function runTests() {
 	runTestGroups(testStrings);
 }
 
-function cleanExternal(url: string): string {
+function formatExternalLink(url: string): string {
 	const path = findPath(url);
 	let output = ``;
 	if (path && path != `/`) {
@@ -105,22 +132,26 @@ function cleanExternal(url: string): string {
 	return output;
 }
 
-function cleanLink(url: string, domain: string, current: string): string {
-
-	if (!isInternal(url, domain)) return cleanExternal(url);
+function formatLink(url: string, domain: string, current: string): string {
 	if (isOnPageAnchor(url)) return ``;
+	if (!isInternal(url, domain)) return formatExternalLink(url);
+	
 	if (isRoot(url)) return `https://` + domain + `/`;
-	let output = ``;
+	let output;
+	let path;
 	if (isRelativeToRoot(url)) {
-		output = `https://` + domain + findPath(url);
+		path = findPath(url)
 	}
-	output = removeAnchor(output);
+	if (isRelativeToPage(url)) {
+		path = findPathFromRoot(url, current);
+	}
+	output = `https://` + domain + path;
 	return output;
 
 }
 
-function cleanLinkTestBridge(url: string): string {
-	return cleanLink(url, `jesseconner.ca`, `https://jesseconner.ca/pages/`);
+function formatLinkTestBridge(url: string): string {
+	return formatLink(url, `jesseconner.ca`, `https://jesseconner.ca/pages/`);
 }
 
 const testStrings: Array<TestGroup> = [
@@ -160,7 +191,7 @@ const testStrings: Array<TestGroup> = [
 				expected: false,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://jesseconner.ca/`,
 			},
 			
@@ -208,7 +239,7 @@ const testStrings: Array<TestGroup> = [
 				expected: `css`,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://somecdn/asset.css`,
 			},
 		],
@@ -253,8 +284,8 @@ const testStrings: Array<TestGroup> = [
 				expected: `css`,
 			},
 			{
-				function: cleanLinkTestBridge,
-				expected: `https://assets/somecdn/asset.css`,
+				function: formatLinkTestBridge,
+				expected: `https://assets.somecdn/asset.css`,
 			},
 		],
 	},
@@ -298,7 +329,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://jesseconner.ca/`,
 			},
 		],
@@ -343,7 +374,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `ftp://127.0.0.1/`,
 			},
 		],
@@ -388,7 +419,7 @@ const testStrings: Array<TestGroup> = [
 				expected: `html`,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://jesseconner.ca/index.html`,
 			},
 		],
@@ -433,7 +464,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://jesseconner.ca/`,
 			},
 		],
@@ -479,8 +510,8 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
-				expected: `https://jesseconner.ca/folder/index/`,
+				function: formatLinkTestBridge,
+				expected: `https://jesseconner.ca/pages/folder/index/`,
 			},
 		],
 	},
@@ -497,7 +528,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: findPath,
-				expected: `bad//relative/`,
+				expected: `bad/relative/`,
 			},
 			{
 				function: isOnPageAnchor,
@@ -525,8 +556,8 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
-				expected: `https://jesseconner.ca/bad/relative/`,
+				function: formatLinkTestBridge,
+				expected: `https://jesseconner.ca/pages/bad/relative/`,
 			},
 		],
 	},
@@ -571,7 +602,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: ``,
 			},
 		],
@@ -617,7 +648,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: ``,
 			},
 		],
@@ -663,7 +694,7 @@ const testStrings: Array<TestGroup> = [
 				expected: ``,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `http://localhost/`,
 			},
 		],
@@ -709,8 +740,8 @@ const testStrings: Array<TestGroup> = [
 				expected: `php`,
 			},
 			{
-				function: cleanLinkTestBridge,
-				expected: `https://jesseconner.ca/somefolder.php`,
+				function: formatLinkTestBridge,
+				expected: `https://jesseconner.ca/pages/somefolder.php`,
 			},
 		],
 	},
@@ -755,7 +786,7 @@ const testStrings: Array<TestGroup> = [
 				expected: `png`,
 			},
 			{
-				function: cleanLinkTestBridge,
+				function: formatLinkTestBridge,
 				expected: `https://jesseconner.ca/path/someimage.png?size=1x1`,
 			},
 		],
@@ -766,5 +797,5 @@ export default {
 	findProtocol,
 	isInternal,
 	runTests,
-	cleanLink,
+	cleanLink: formatLink,
 };
