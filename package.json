@@ -2,8 +2,9 @@
   "name": "node-site-crawler",
   "version": "1.0.0",
   "description": "A node script to crawl a domain, find broken links, assets, and generate a page list. ",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "start": "tsc && node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/mirite/Node-Site-Crawler#readme",
   "devDependencies": {
+    "@types/node": "^15.6.1",
     "typescript": "^4.3.2"
   }
 }

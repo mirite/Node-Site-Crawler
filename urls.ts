@@ -86,3 +86,5 @@ const testStrings:Array<TestGroup> = [
 ];
 
 runTestGroups(testStrings);
+
+module.exports = { findProtocol };
