@@ -34,10 +34,10 @@ function isOnPageAnchor(url: string): boolean {
 }
 
 function removeDomain(url: string): string {
-	let output = url;
+	let output = url.toLowerCase();
 	const domain = findDomain(url);
 	//  console.log(url, domain);
-	if(domain) output = output.substring(url.indexOf(domain) + domain.length);
+	if(domain) output = output.substring(output.indexOf(domain) + domain.length + 1);
 	return output;
 }
 
