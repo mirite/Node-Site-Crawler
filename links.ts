@@ -1,4 +1,5 @@
 import { ArrayTestGroup, runArrayTestGroups } from './tests';
+import URLTools from './urls';
 
 function find(body: string): Array<string> {
 
@@ -10,6 +11,19 @@ function find(body: string): Array<string> {
 		//console.log(match);
 	}
 	return results;
+}
+
+function findInternal(body: string, domain: string): Array<string> {
+	const allLinks = find(body);
+	const internalLinks = allLinks.filter(link => { return URLTools.isInternal(link, domain) });
+	let output = internalLinks.map(link => URLTools.cleanLink(link, domain));
+	return output;
+}
+
+function findExternal(body: string, domain: string): Array<string> {
+	const allLinks = find(body);
+	const output = allLinks.filter(link => {return !URLTools.isInternal(link, domain)});
+	return output;
 }
 
 function runTests() {
@@ -76,5 +90,7 @@ const testArrays: Array<ArrayTestGroup> = [
 
 export default {
 	find,
+	findInternal,
+	findExternal,
 	runTests,
 }

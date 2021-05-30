@@ -1,24 +1,46 @@
 const axios = require('axios').default;
+import LinkFinder from './links';
 
-type Request = {
-	target: string,
-	source: string,
-	responseCode: number,
-	body: string,
-}
+export default class Request {
 
-async function getPage(request:Request): Promise<Request> {
+	target: string;
+	domain: string;
+	source?: string;
+	responseCode?: number;
+	body?: string;
 
-	try {
-		const response = await axios.get(request.target);
-		request.body = response.data;
-		request.responseCode = response.status;
-		
-		return request;
-	} catch (err) {
-		console.log(err);
-		return request;
+	constructor(target: string, domain: string, source?: string) {
+		this.target = target;
+		this.domain = domain;
+		this.source = source ?? '';
+	}
+
+	async get(): Promise<void> {
+
+		try {
+			const response = await axios.get(this.target);
+			this.body = response.data;
+			this.responseCode = response.status;
+			
+		} catch (err) {
+			console.log(err);
+		}
+	
+	}
+
+	links(): Array<string> {
+		if (!this.body) return null;
+		return LinkFinder.find(this.body);
+	}
+
+	internalLinks(): Array<string> {
+		if (!this.body) return null;
+		return LinkFinder.findInternal(this.body, this.domain);
+	}
+
+	externalLinks(): Array<string> {
+		if (!this.body) return null;
+		return LinkFinder.findExternal(this.body, this.domain);
 	}
 
 }
-export default {Request, getPage}

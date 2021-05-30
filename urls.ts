@@ -25,6 +25,10 @@ function findPath(url: string): string {
 	return output;
 }
 
+function findPathFromRoot(url: string, sourcePage: string): string {
+	
+}
+
 function findFileName(url: string): string {
 	let output = findPath(url);
 	if (!output) return ``;
@@ -70,8 +74,43 @@ function isRoot(url: string): boolean {
 	return bare === `` || bare === `/`;
 }
 
+function isInternal(url: string, domain: string): boolean {
+	if (isRelative(url)) return true;
+	const linkDomain = findDomain(url);
+	return domain === linkDomain;
+}
+
 function runTests() {
 	runTestGroups(testStrings);
+}
+
+function cleanExternal(url: string): string {
+	const path = findPath(url);
+	let output = ``;
+	if (path && path != `/`) {
+		output = findProtocol(url) + `://` + findDomain(url) + `/` + path;
+	} else {
+		output = findProtocol(url) + `://` + findDomain(url) + `/`;
+	}
+	
+	return output;
+}
+
+function cleanLink(url: string, domain: string): string {
+
+	if (!isInternal(url, domain)) return cleanExternal(url);
+	if (isOnPageAnchor(url)) return ``;
+	let output = ``;
+	if (isRelative(url)) {
+		output = `https://` + domain + findPath(url);
+	}
+	output = removeAnchor(output);
+	return output;
+
+}
+
+function cleanLinkTestBridge(url: string): string {
+	return cleanLink(url, `jesseconner.ca`);
 }
 
 const testStrings: Array<TestGroup> = [
@@ -102,6 +141,11 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: ``,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/`,
+			},
+			
 
 		],
 
@@ -137,6 +181,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: `css`,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://SomeCDN/asset.css`,
+			},
 		],
 	},
 	{
@@ -169,6 +217,10 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: findFileType,
 				expected: `css`,
+			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://assets/SomeCDN/asset.css`,
 			},
 		],
 	},
@@ -203,6 +255,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: ``,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/`,
+			},
 		],
 	},
 	{
@@ -235,6 +291,10 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: findFileType,
 				expected: ``,
+			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `ftp://127.0.0.1`,
 			},
 		],
 	},
@@ -269,6 +329,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: `html`,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/index.html`,
+			},
 		],
 	},
 	{
@@ -302,6 +366,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: ``,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/`,
+			},
 		],
 	},
 	{
@@ -317,7 +385,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: findPath,
-				expected: `folder/index`,
+				expected: `folder/index/`,
 			},
 			{
 				function: isOnPageAnchor,
@@ -335,6 +403,10 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: findFileType,
 				expected: ``,
+			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/folder/index/`,
 			},
 		],
 	},
@@ -370,6 +442,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: ``,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/bad/relative/`,
+			},
 		],
 	},
 	{
@@ -402,6 +478,10 @@ const testStrings: Array<TestGroup> = [
 			
 			{
 				function: findFileType,
+				expected: ``,
+			},
+			{
+				function: cleanLinkTestBridge,
 				expected: ``,
 			},
 		],
@@ -438,6 +518,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: ``,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: ``,
+			},
 		],
 	},
 	{
@@ -471,6 +555,10 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: findFileType,
 				expected: ``,
+			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `http://localhost/`,
 			},
 		],
 	},
@@ -506,6 +594,10 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: `php`,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/somefolder.php`,
+			},
 		],
 	},
 	{
@@ -540,11 +632,17 @@ const testStrings: Array<TestGroup> = [
 				function: findFileType,
 				expected: `png`,
 			},
+			{
+				function: cleanLinkTestBridge,
+				expected: `https://jesseconner.ca/path/someimage.png?size=1x1`,
+			},
 		],
 	},
 ];
 
 export default {
 	findProtocol,
+	isInternal,
 	runTests,
+	cleanLink,
 };
