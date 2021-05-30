@@ -8,7 +8,9 @@ function findProtocol(url: string): string {
 }
 
 function findDomain(url: string): string {
-	if (isRelative(url)) return ``;
+	if (isRelativeToRoot(url)) return ``;
+	if (isRelativeToPage(url)) return ``;
+	if (isOnPageAnchor(url)) return ``;
 	const protocol = findProtocol(url);
 	let output = url.replace(protocol, ``).toLowerCase();
 	const re = /(\:?\/\/)/i;
@@ -22,11 +24,12 @@ function findPath(url: string): string {
 	let output = removeDomain(url);
 	output = removeAnchor(output);
 	if (output === ``) return `/`;
+	if (!output.includes(`.`) && output.substring(output.length-1) != `/`) output = output + `/`;
 	return output;
 }
 
 function findPathFromRoot(url: string, sourcePage: string): string {
-	
+	return sourcePage + url;
 }
 
 function findFileName(url: string): string {
@@ -45,8 +48,14 @@ function findFileType(url: string): string {
 	return fileType;
 }
 
-function isRelative(url: string): boolean {
-	return findProtocol(url) === ``;
+function isRelativeToRoot(url: string): boolean {
+	if (isOnPageAnchor(url)) return false;
+	return findProtocol(url) === `` && url.substring(0,1) === `/`;
+}
+
+function isRelativeToPage(url: string): boolean {
+	if (isOnPageAnchor(url)) return false;
+	return findProtocol(url) === `` && url.substring(0,1) != `/`;
 }
 
 function isOnPageAnchor(url: string): boolean {
@@ -75,7 +84,7 @@ function isRoot(url: string): boolean {
 }
 
 function isInternal(url: string, domain: string): boolean {
-	if (isRelative(url)) return true;
+	if (isRelativeToRoot(url)) return true;
 	const linkDomain = findDomain(url);
 	return domain === linkDomain;
 }
@@ -96,12 +105,13 @@ function cleanExternal(url: string): string {
 	return output;
 }
 
-function cleanLink(url: string, domain: string): string {
+function cleanLink(url: string, domain: string, current: string): string {
 
 	if (!isInternal(url, domain)) return cleanExternal(url);
 	if (isOnPageAnchor(url)) return ``;
+	if (isRoot(url)) return `https://` + domain + `/`;
 	let output = ``;
-	if (isRelative(url)) {
+	if (isRelativeToRoot(url)) {
 		output = `https://` + domain + findPath(url);
 	}
 	output = removeAnchor(output);
@@ -110,7 +120,7 @@ function cleanLink(url: string, domain: string): string {
 }
 
 function cleanLinkTestBridge(url: string): string {
-	return cleanLink(url, `jesseconner.ca`);
+	return cleanLink(url, `jesseconner.ca`, `https://jesseconner.ca/pages/`);
 }
 
 const testStrings: Array<TestGroup> = [
@@ -140,6 +150,14 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: findFileType,
 				expected: ``,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
 			},
 			{
 				function: cleanLinkTestBridge,
@@ -173,6 +191,14 @@ const testStrings: Array<TestGroup> = [
 				expected: false,
 			},
 			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: `asset.css`,
 			},
@@ -183,7 +209,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: cleanLinkTestBridge,
-				expected: `https://SomeCDN/asset.css`,
+				expected: `https://somecdn/asset.css`,
 			},
 		],
 	},
@@ -210,6 +236,14 @@ const testStrings: Array<TestGroup> = [
 				expected: false,
 			},
 			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: `asset.css`,
 			},
@@ -220,7 +254,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: cleanLinkTestBridge,
-				expected: `https://assets/SomeCDN/asset.css`,
+				expected: `https://assets/somecdn/asset.css`,
 			},
 		],
 	},
@@ -245,6 +279,14 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: true,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
 			},
 			{
 				function: findFileName,
@@ -284,6 +326,14 @@ const testStrings: Array<TestGroup> = [
 				expected: true,
 			},
 			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: ``,
 			},
@@ -294,7 +344,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: cleanLinkTestBridge,
-				expected: `ftp://127.0.0.1`,
+				expected: `ftp://127.0.0.1/`,
 			},
 		],
 	},
@@ -319,6 +369,14 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: true,
 			},
 			{
 				function: findFileName,
@@ -355,6 +413,14 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: isRoot,
+				expected: true,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
 				expected: true,
 			},
 			{
@@ -396,6 +462,14 @@ const testStrings: Array<TestGroup> = [
 				expected: false,
 			},
 			{
+				function: isRelativeToPage,
+				expected: true,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: ``,
 			},
@@ -423,7 +497,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: findPath,
-				expected: `bad//relative`,
+				expected: `bad//relative/`,
 			},
 			{
 				function: isOnPageAnchor,
@@ -431,6 +505,14 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: isRoot,
+				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: true,
+			},
+			{
+				function: isRelativeToRoot,
 				expected: false,
 			},
 			{
@@ -472,6 +554,14 @@ const testStrings: Array<TestGroup> = [
 				expected: false,
 			},
 			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: ``,
 			},
@@ -507,6 +597,14 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: isRoot,
+				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
 				expected: false,
 			},
 			{
@@ -548,6 +646,14 @@ const testStrings: Array<TestGroup> = [
 				expected: true,
 			},
 			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
 				function: findFileName,
 				expected: ``,
 			},
@@ -583,6 +689,14 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: isRoot,
+				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: true,
+			},
+			{
+				function: isRelativeToRoot,
 				expected: false,
 			},
 			{
@@ -622,6 +736,14 @@ const testStrings: Array<TestGroup> = [
 			{
 				function: isRoot,
 				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: true,
 			},
 			{
 				function: findFileName,

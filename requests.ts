@@ -35,7 +35,7 @@ export default class Request {
 
 	internalLinks(): Array<string> {
 		if (!this.body) return null;
-		return LinkFinder.findInternal(this.body, this.domain);
+		return LinkFinder.findInternal(this.body, this.domain, this.target);
 	}
 
 	externalLinks(): Array<string> {

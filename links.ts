@@ -13,10 +13,10 @@ function find(body: string): Array<string> {
 	return results;
 }
 
-function findInternal(body: string, domain: string): Array<string> {
+function findInternal(body: string, domain: string, current: string): Array<string> {
 	const allLinks = find(body);
 	const internalLinks = allLinks.filter(link => { return URLTools.isInternal(link, domain) });
-	let output = internalLinks.map(link => URLTools.cleanLink(link, domain));
+	let output = internalLinks.map(link => URLTools.cleanLink(link, domain, current));
 	return output;
 }
 
