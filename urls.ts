@@ -53,7 +53,7 @@ function findPathFromRoot(url: string, sourcePage: string): string {
 		const fileName = findFileName(sourcePage);
 		sourcePath = sourcePath.replace(fileName, ``);
 	}
-	output = `/` + sourcePath + url;
+	output = sourcePath + url;
 	output = cleanPath(output)
 	return output;
 }
@@ -70,7 +70,7 @@ function findFileType(url: string): string {
 	let filename = findFileName(url);
 	if (!filename) return ``;
 	if (filename.includes(`?`)) filename = filename.substring(0, filename.indexOf(`?`));
-	const fileType = filename.substring(filename.indexOf(`.`) + 1);
+	const fileType = filename.substring(filename.lastIndexOf(`.`) + 1);
 	return fileType;
 }
 
@@ -92,7 +92,7 @@ function removeDomain(url: string): string {
 	let output = url.toLowerCase();
 	const domain = findDomain(url);
 	//  console.log(url, domain);
-	if(domain) output = output.substring(output.indexOf(domain) + domain.length + 1);
+	if(domain) output = output.substring(output.indexOf(domain) + domain.length);
 	return output;
 }
 
@@ -124,11 +124,11 @@ function formatExternalLink(url: string): string {
 	const path = findPath(url);
 	let output = ``;
 	if (path && path != `/`) {
-		output = findProtocol(url) + `://` + findDomain(url) + `/` + path;
+		output = findProtocol(url) + `://` + findDomain(url) + path;
 	} else {
 		output = findProtocol(url) + `://` + findDomain(url) + `/`;
 	}
-	
+
 	return output;
 }
 
@@ -137,14 +137,15 @@ function formatLink(url: string, domain: string, current: string): string {
 	if (!isInternal(url, domain)) return formatExternalLink(url);
 	
 	if (isRoot(url)) return `https://` + domain + `/`;
-	let output;
-	let path;
-	if (isRelativeToRoot(url)) {
-		path = findPath(url)
-	}
+	let output: string;
+	let path: string;
+
 	if (isRelativeToPage(url)) {
 		path = findPathFromRoot(url, current);
+	} else {
+		path = findPath(url)
 	}
+	//console.log(path);
 	output = `https://` + domain + path;
 	return output;
 
@@ -211,7 +212,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: findPath,
-				expected: `asset.css`,
+				expected: `/asset.css`,
 			},
 			{
 				function: isOnPageAnchor,
@@ -256,7 +257,7 @@ const testStrings: Array<TestGroup> = [
 			},
 			{
 				function: findPath,
-				expected: `asset.css`,
+				expected: `/asset.css`,
 			},
 			{
 				function: isOnPageAnchor,
@@ -791,11 +792,60 @@ const testStrings: Array<TestGroup> = [
 			},
 		],
 	},
+	{
+		input: `https://jesseconner.ca/_nuxt/icons/icon_64x64.5f6a36.png`,
+		tests: [
+			{
+				function: findProtocol,
+				expected: `https`,
+			},
+			{
+				function: findDomain,
+				expected: `jesseconner.ca`,
+			},
+			{
+				function: findPath,
+				expected: `/_nuxt/icons/icon_64x64.5f6a36.png`,
+			},
+			{
+				function: isOnPageAnchor,
+				expected: false,
+			},
+			{
+				function: isRoot,
+				expected: false,
+			},
+			{
+				function: isRelativeToPage,
+				expected: false,
+			},
+			{
+				function: isRelativeToRoot,
+				expected: false,
+			},
+			{
+				function: findFileName,
+				expected: `icon_64x64.5f6a36.png`,
+			},
+			
+			{
+				function: findFileType,
+				expected: `png`,
+			},
+			{
+				function: formatLinkTestBridge,
+				expected: `https://jesseconner.ca/_nuxt/icons/icon_64x64.5f6a36.png`,
+			},
+		],
+	},
 ];
 
 export default {
 	findProtocol,
+	findFileType,
 	isInternal,
 	runTests,
+	findDomain,
 	cleanLink: formatLink,
+	findPath,
 };

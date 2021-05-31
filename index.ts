@@ -1,12 +1,13 @@
 import Request from './requests';
 
 let myReqs: Array<Request> = [];
-let domain: string;
+let pagesCrawled = 0;
 
 async function run() {
-	domain = `https://jesseconner.ca`;
-	const homepage = new Request(domain, domain);
-	crawlPage(homepage);
+	let domain = `jesseconner.ca`;
+	const homepage = new Request(`https://${domain}`, domain);
+	await crawlPage(homepage);
+	console.log(`Done!`);
 }
 
 function getCrawled():Array<string> {
@@ -18,18 +19,23 @@ function getCrawled():Array<string> {
 }
 
 async function crawlPage(current: Request) {
-	console.log(`Crawling ${current.target}`);
+	pagesCrawled++;
+	console.log(`Crawling ${current.target} Pages crawled: ${pagesCrawled}`);
 	await current.get();
 
 	const internalLinks = current.internalLinks();
-	console.log(`Found ${internalLinks} links`);
+	if (!internalLinks) return;
 	
-	internalLinks.forEach(link => {
-		if (getCrawled().includes(link)) return;
-		const newReq = new Request(link, domain, current.target);
-		myReqs.push(newReq);
-		crawlPage(newReq);
-	});
+	for (const link of internalLinks) {
+		await processLink(link, current);
+	}
+}
+
+async function processLink(link: string, current: Request) {
+	if (getCrawled().includes(link)) return;
+	const newReq = new Request(link, current.domain, current.target);
+	myReqs.push(newReq);
+	await crawlPage(newReq);
 }
 
 run();

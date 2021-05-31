@@ -23,6 +23,7 @@ export default class Request {
 			this.responseCode = response.status;
 			
 		} catch (err) {
+			console.log(this);
 			console.log(err);
 		}
 	
@@ -30,7 +31,7 @@ export default class Request {
 
 	links(): Array<string> {
 		if (!this.body) return null;
-		return LinkFinder.find(this.body);
+		return LinkFinder.find(this.body, this.domain, this.target);
 	}
 
 	internalLinks(): Array<string> {
