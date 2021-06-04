@@ -1,6 +1,5 @@
 import Page from './pages';
 import fs from 'fs';
-import { stringify } from 'querystring';
 
 let myReqs: Array<Page> = [];
 let pagesCrawled = 0;
@@ -9,8 +8,10 @@ export default async function crawlSite(domain: string): Promise<void> {
 
 	const homepage = new Page(`https://${domain}`, domain);
 	await crawlPage(homepage);
-
-	fs.writeFileSync(`crawls/${domain.replace('.','_')}.json`, JSON.stringify(myReqs));
+	writeResults(domain);
+	myReqs.forEach(req => {
+		if (req.responseCode != 200) console.log(`Code: ${req.responseCode} from ${req.target} Linked from ${req.source}`);
+	})
 }
 
 function getCrawled():Array<string> {
@@ -39,4 +40,21 @@ async function processLink(link: string, current: Page) {
 	const newReq = new Page(link, current.domain, current.target);
 	myReqs.push(newReq);
 	await crawlPage(newReq);
+}
+
+function writeResults(domain: string): void {
+	const path = domain.replace(/\./g, '_');
+	if (!fs.existsSync('crawls')){
+		fs.mkdirSync('crawls');
+	}
+	if (!fs.existsSync('crawls/' + path)){
+		fs.mkdirSync('crawls/' + path);
+	}
+	fs.writeFileSync(`crawls/${path}.json`, JSON.stringify(myReqs));
+	let i = 0;
+	for (const req of myReqs) {
+		fs.writeFileSync(`crawls/${path}/${i}.json`, JSON.stringify(req));
+		i++;
+	}
+
 }
