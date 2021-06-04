@@ -2,7 +2,7 @@ import Crawler from './crawler';
 
 async function run() {
 
-	Crawler(`rootree.ca`);
+	Crawler(`rootree.wpengine.com`);
 	console.log(`Done!`);
 }
 

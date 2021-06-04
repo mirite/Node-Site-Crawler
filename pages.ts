@@ -23,8 +23,7 @@ export default class Page {
 			this.responseCode = response.code;
 			
 		} catch (err) {
-			console.log(this);
-			console.log(err);
+			this.responseCode = err.status;
 		}
 	
 	}

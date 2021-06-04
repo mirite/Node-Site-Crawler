@@ -1,4 +1,6 @@
 import Page from './pages';
+import fs from 'fs';
+import { stringify } from 'querystring';
 
 let myReqs: Array<Page> = [];
 let pagesCrawled = 0;
@@ -7,6 +9,8 @@ export default async function crawlSite(domain: string): Promise<void> {
 
 	const homepage = new Page(`https://${domain}`, domain);
 	await crawlPage(homepage);
+
+	fs.writeFileSync(`crawls/${domain.replace('.','_')}.json`, JSON.stringify(myReqs));
 }
 
 function getCrawled():Array<string> {
