@@ -8,7 +8,7 @@ import Crawler from 'simple-node-site-crawler';
 async function run() {
 
 	await Crawler.crawlSite(`jesseconner.ca`);
-	Crawler.writeResults();
+	Crawler.writeResults(`jesseconner.ca`);
 	const site = Crawler.loadResults(`jesseconner.ca`);
  
  // Find any pages not linked from homepage.
