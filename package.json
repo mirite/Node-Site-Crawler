@@ -1,11 +1,10 @@
 {
-  "name": "node-site-crawler",
-  "version": "1.0.0",
-  "description": "A node script to crawl a domain, find broken links, assets, and generate a page list. ",
-  "main": "dist/index.js",
+  "name": "simple-node-site-crawler",
+  "version": "0.0.1",
+  "description": "A simple node module to crawl a domain and generate a page list. ",
+  "main": "dist/crawler.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "test": "tsc && node dist/run-tests.js"
+    "start": "tsc && node dist/crawler.js"
   },
   "repository": {
     "type": "git",
@@ -23,11 +22,9 @@
     "url": "https://github.com/mirite/Node-Site-Crawler/issues"
   },
   "homepage": "https://github.com/mirite/Node-Site-Crawler#readme",
-  "devDependencies": {
-    "@types/node": "^15.6.1",
-    "typescript": "^4.3.2"
-  },
   "dependencies": {
+	"@types/node": "^15.6.1",
+    "typescript": "^4.3.2",
     "axios": "^0.21.1",
     "jsdom": "^16.6.0"
   }

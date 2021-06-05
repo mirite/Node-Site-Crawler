@@ -4,7 +4,7 @@ import fs from 'fs';
 let myReqs: Array<Page> = [];
 let pagesCrawled = 0;
 
-export default async function crawlSite(domain: string): Promise<void> {
+async function crawlSite(domain: string): Promise<void> {
 
 	const homepage = new Page(`https://${domain}`, domain);
 	await crawlPage(homepage);
@@ -43,7 +43,7 @@ async function processLink(link: string, current: Page) {
 }
 
 function writeResults(domain: string): void {
-	const path = domain.replace(/\./g, '_');
+	const path = makePathSafe(domain);
 	if (!fs.existsSync('crawls')){
 		fs.mkdirSync('crawls');
 	}
@@ -57,4 +57,23 @@ function writeResults(domain: string): void {
 		i++;
 	}
 
+}
+
+function makePathSafe(domain:string):string {
+	return domain.replace(/\./g, '_');
+}
+
+function loadResults(domain: string): Array<Page> {
+	
+	const path = makePathSafe(domain);
+
+	const raw = fs.readFileSync(`crawls/${path}.json`);
+	const body = JSON.parse(raw.toString());
+	return body;
+}
+
+export default {
+	crawlSite,
+	writeResults,
+	loadResults,
 }
