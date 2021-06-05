@@ -9,9 +9,7 @@ async function crawlSite(domain: string): Promise<void> {
 	const homepage = new Page(`https://${domain}`, domain);
 	await crawlPage(homepage);
 	writeResults(domain);
-	myReqs.forEach(req => {
-		if (req.responseCode != 200) console.log(`Code: ${req.responseCode} from ${req.target} Linked from ${req.source}`);
-	})
+	console.log(`Crawl Complete!`);
 }
 
 function getCrawled():Array<string> {
@@ -74,6 +72,5 @@ function loadResults(domain: string): Array<Page> {
 
 export default {
 	crawlSite,
-	writeResults,
 	loadResults,
 }
