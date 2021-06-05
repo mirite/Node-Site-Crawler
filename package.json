@@ -1,6 +1,6 @@
 {
   "name": "simple-node-site-crawler",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A simple node module to crawl a domain and generate a page list. ",
   "main": "dist/crawler.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/mirite/Node-Site-Crawler#readme",
   "dependencies": {
-	"@types/node": "^15.6.1",
+    "@types/node": "^15.6.1",
     "typescript": "^4.3.2",
     "axios": "^0.21.1",
     "jsdom": "^16.6.0"
