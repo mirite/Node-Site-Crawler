@@ -1,15 +1,33 @@
 import Page from './pages'
 import fs from 'fs'
+import { Interface } from 'readline';
+import { SIGTERM } from 'constants';
 const EventEmitter = require('events');
-const status = new EventEmitter();
+const events = new EventEmitter();
 
 const myReqs: Array<Page> = []
-let pagesCrawled = 0
+
+type Status = {
+	pagesCrawled: number,
+	currentPage: string,
+	isDone: boolean,	
+}
+const status: Status = {
+	pagesCrawled: 0,
+	currentPage: '',
+	isDone: false,
+};
+
+function updateStatus():void {
+	events.emit('update', status)
+}
 
 async function crawlSite (domain: string): Promise<void> {
-  const homepage = new Page(`https://${domain}`, domain)
-  await crawlPage(homepage)
-  writeResults(domain)
+  	const homepage = new Page(`https://${domain}`, domain)
+	await crawlPage(homepage)
+	status.isDone = true;
+	updateStatus();
+ 	writeResults(domain)
 }
 
 function getCrawled ():Array<string> {
@@ -21,9 +39,10 @@ function getCrawled ():Array<string> {
 }
 
 async function crawlPage (current: Page) {
-  pagesCrawled++
-  status.emit('update', `Crawling ${current.target} Pages crawled: ${pagesCrawled}`)
-  await current.get()
+	status.pagesCrawled++
+	status.currentPage = current.target
+	updateStatus()
+  	await current.get()
 
   const internalLinks = current.internalLinks()
   if (!internalLinks) return
@@ -72,5 +91,5 @@ export default {
   crawlSite,
   loadResults,
 	Page,
-	status,
+	status: events,
 }
