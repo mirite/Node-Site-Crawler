@@ -1,5 +1,7 @@
 import Page from './pages'
 import fs from 'fs'
+const EventEmitter = require('events');
+const status = new EventEmitter();
 
 const myReqs: Array<Page> = []
 let pagesCrawled = 0
@@ -8,7 +10,6 @@ async function crawlSite (domain: string): Promise<void> {
   const homepage = new Page(`https://${domain}`, domain)
   await crawlPage(homepage)
   writeResults(domain)
-  console.log('Crawl Complete!')
 }
 
 function getCrawled ():Array<string> {
@@ -21,7 +22,7 @@ function getCrawled ():Array<string> {
 
 async function crawlPage (current: Page) {
   pagesCrawled++
-  console.log(`Crawling ${current.target} Pages crawled: ${pagesCrawled}`)
+  status.emit('update', `Crawling ${current.target} Pages crawled: ${pagesCrawled}`)
   await current.get()
 
   const internalLinks = current.internalLinks()
@@ -70,5 +71,6 @@ function loadResults (domain: string): Array<Page> {
 export default {
   crawlSite,
   loadResults,
-  Page
+	Page,
+	status,
 }
