@@ -26,7 +26,7 @@ export class Crawler {
 	}
 
 	updateStatus():void {
-		this.events.emit('update', status)
+		this.events.emit('update', this.status)
 	}
 	
 	async crawlSite (domain: string): Promise<void> {
@@ -65,7 +65,6 @@ export class Crawler {
 	  this.myReqs.push(newReq)
 	  await this.crawlPage(newReq)
 	}
-	
 	writeResults (domain: string): void {
 	  const path = this.makePathSafe(domain)
 	  if (!fs.existsSync('crawls')) {
