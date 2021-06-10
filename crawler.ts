@@ -1,6 +1,6 @@
 import Page from './pages'
 import fs from 'fs'
-const EventEmitter = require('events');
+import EventEmitter from 'events';
 
 type Status = {
 	pagesCrawled: number,
@@ -9,16 +9,22 @@ type Status = {
 }
 
 export default class Crawler {
-	events = new EventEmitter()
+	events: EventEmitter
+	myReqs: Array<Page>
+	status: Status
 
-	myReqs: Array<Page> = []
-	
-	status: Status = {
-		pagesCrawled: 0,
-		currentPage: '',
-		isDone: false,
-	};
-	
+	constructor() {
+		this.events = new EventEmitter()
+
+		this.myReqs = []
+		
+		this.status = {
+			pagesCrawled: 0,
+			currentPage: '',
+			isDone: false,
+		};
+	}
+
 	updateStatus():void {
 		this.events.emit('update', status)
 	}
