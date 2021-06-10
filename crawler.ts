@@ -2,13 +2,13 @@ import Page from './pages'
 import fs from 'fs'
 import EventEmitter from 'events';
 
-type Status = {
+export type Status = {
 	pagesCrawled: number,
 	currentPage: string,
 	isDone: boolean,	
 }
 
-export default class Crawler {
+export class Crawler {
 	events: EventEmitter
 	myReqs: Array<Page>
 	status: Status
