@@ -25,7 +25,7 @@ export class Crawler {
 		};
 	}
 
-	updateStatus():void {
+	updateStatus(): void {
 		this.events.emit('update', this.status)
 	}
 	
