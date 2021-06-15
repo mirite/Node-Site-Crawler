@@ -65,14 +65,23 @@ export class Crawler {
     }
 
     async processLink(link: string, current: Page) {
-      if (this.getCrawled().includes(link)) return;
+      let skip = false;
+
+      this.myReqs.forEach((request) => {
+        if (request.target === link) {
+          request.sources.push(current.target);
+          skip = true;
+        }
+      });
+
+      if (skip) return;
       const newReq = new Page(link, current.domain, current.target);
       this.myReqs.push(newReq);
       await this.crawlPage(newReq);
     }
 
     writeResults(): void {
-      const path = this.makePathSafe(this.domain);
+      const path = this.makePathSafe();
       if (!fs.existsSync('crawls')) {
         fs.mkdirSync('crawls');
       }

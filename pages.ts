@@ -8,6 +8,8 @@ export default class Page {
 
     source?: string;
 
+    sources: Array<string>
+
     responseCode?: number;
 
     body?: string;
@@ -16,6 +18,7 @@ export default class Page {
       this.target = target;
       this.domain = domain;
       this.source = source ?? '';
+      this.sources = [this.source];
     }
 
     async get(): Promise<void> {
