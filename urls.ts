@@ -1,8 +1,26 @@
+function isOnPageAnchor(url: string): boolean {
+  return url.substring(0, 1) === '#';
+}
+
+function stripDoubles(url: string): string {
+  return url.replace('//', '/');
+}
+
 function findProtocol(url: string): string {
   if (!url.includes('//')) return '';
   if (url.indexOf('//') === 0) return 'https';
   if (!url.includes('://')) return '';
   return url.substring(0, url.indexOf('://')).toLowerCase();
+}
+
+function isRelativeToRoot(url: string): boolean {
+  if (isOnPageAnchor(url)) return false;
+  return findProtocol(url) === '' && url.substring(0, 1) === '/';
+}
+
+function isRelativeToPage(url: string): boolean {
+  if (isOnPageAnchor(url)) return false;
+  return findProtocol(url) === '' && url.substring(0, 1) !== '/';
 }
 
 function findDomain(url: string): string {
@@ -17,9 +35,31 @@ function findDomain(url: string): string {
   return output;
 }
 
+function removeDomain(url: string): string {
+  let output = url.toLowerCase();
+  const domain = findDomain(url);
+  //  console.log(url, domain);
+  if (domain) output = output.substring(output.indexOf(domain) + domain.length);
+  return output;
+}
+
+function removeAnchor(url: string): string {
+  if (!url.includes('#')) return url;
+  const output = url.substring(0, url.indexOf('#'));
+  return output;
+}
+
 function endURL(url: string): string {
   if (!url.includes('.') && url.substring(url.length - 1) !== '/') return `${url}/`;
   return url;
+}
+
+function cleanPath(url: string) {
+  let cleanedURL = url;
+  cleanedURL = endURL(cleanedURL);
+  cleanedURL = stripDoubles(cleanedURL);
+  cleanedURL = removeAnchor(cleanedURL);
+  return cleanedURL;
 }
 
 function findPath(url: string): string {
@@ -31,15 +71,12 @@ function findPath(url: string): string {
   return output;
 }
 
-function stripDoubles(url: string): string {
-  return url.replace('//', '/');
-}
-
-function cleanPath(url: string) {
-  url = endURL(url);
-  url = stripDoubles(url);
-  url = removeAnchor(url);
-  return url;
+function findFileName(url: string): string {
+  let output = findPath(url);
+  if (!output) return '';
+  output = output.substring(output.lastIndexOf('/') + 1);
+  if (!output.includes('.')) return '';
+  return output;
 }
 
 function findPathFromRoot(url: string, sourcePage: string): string {
@@ -56,48 +93,12 @@ function findPathFromRoot(url: string, sourcePage: string): string {
   return output;
 }
 
-function findFileName(url: string): string {
-  let output = findPath(url);
-  if (!output) return '';
-  output = output.substring(output.lastIndexOf('/') + 1);
-  if (!output.includes('.')) return '';
-  return output;
-}
-
 function findFileType(url: string): string {
   let filename = findFileName(url);
   if (!filename) return '';
   if (filename.includes('?')) filename = filename.substring(0, filename.indexOf('?'));
   const fileType = filename.substring(filename.lastIndexOf('.') + 1);
   return fileType;
-}
-
-function isRelativeToRoot(url: string): boolean {
-  if (isOnPageAnchor(url)) return false;
-  return findProtocol(url) === '' && url.substring(0, 1) === '/';
-}
-
-function isRelativeToPage(url: string): boolean {
-  if (isOnPageAnchor(url)) return false;
-  return findProtocol(url) === '' && url.substring(0, 1) !== '/';
-}
-
-function isOnPageAnchor(url: string): boolean {
-  return url.substring(0, 1) === '#';
-}
-
-function removeDomain(url: string): string {
-  let output = url.toLowerCase();
-  const domain = findDomain(url);
-  //  console.log(url, domain);
-  if (domain) output = output.substring(output.indexOf(domain) + domain.length);
-  return output;
-}
-
-function removeAnchor(url: string): string {
-  if (!url.includes('#')) return url;
-  const output = url.substring(0, url.indexOf('#'));
-  return output;
 }
 
 function isRoot(url: string): boolean {
