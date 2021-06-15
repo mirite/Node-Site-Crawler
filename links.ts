@@ -26,7 +26,8 @@ function find(body: string, domain: string, current?: string): Array<string> {
   const results: Array<string> = [];
   // let match:RegExpExecArray;
   // while ((match = re.exec(body)) !== null) {
-  anchors.array.forEach((result) => {
+  if (!anchors) return results;
+  anchors.forEach((result) => {
     const link = findLink(result, domain, current);
     if (link) results.push(link);
   });
