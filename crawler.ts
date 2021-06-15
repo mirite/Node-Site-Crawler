@@ -35,7 +35,7 @@ export class Crawler {
     }
 
     async crawlSite(): Promise<void> {
-      const homepage = new Page(`https://${this.domain}`, this.domain);
+      const homepage = new Page(`https://${this.domain}/`, this.domain);
       await this.crawlPage(homepage);
       this.status.isDone = true;
       this.updateStatus();
