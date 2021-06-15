@@ -1,6 +1,6 @@
 {
 	"name": "simple-node-site-crawler",
-	"version": "0.1.14",
+	"version": "0.1.15",
 	"description": "A simple node module to crawl a domain and generate a page list. ",
 	"main": "dist/crawler.js",
 	"scripts": {
