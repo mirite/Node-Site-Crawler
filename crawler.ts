@@ -58,25 +58,22 @@ export class Crawler {
 
       const internalLinks = current.internalLinks();
       if (!internalLinks) return;
-
-      internalLinks.forEach(async (link) => {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const link of internalLinks) {
+        // eslint-disable-next-line no-await-in-loop
         await this.processLink(link, current);
-      });
+      }
     }
 
     async processLink(link: string, current: Page):Promise<void> {
       let skip = false;
-      console.log('before');
       this.myReqs.forEach((request) => {
         if (request.target === link) {
-          console.log(`Skipping ${link} previously found on ${request.source}`);
           request.sources.push(current.target);
           skip = true;
         }
       });
-      console.log('after');
       if (skip) return;
-      console.log(`crawling ${link}`);
       const newReq = new Page(link, current.domain, current.target);
       this.myReqs.push(newReq);
       await this.crawlPage(newReq);
