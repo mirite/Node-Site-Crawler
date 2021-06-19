@@ -14,11 +14,13 @@ function findProtocol(url: string): string {
 }
 
 function isRelativeToRoot(url: string): boolean {
+  if (url === '') return false;
   if (isOnPageAnchor(url)) return false;
   return findProtocol(url) === '' && url.substring(0, 1) === '/';
 }
 
 function isRelativeToPage(url: string): boolean {
+  if (url === '') return false;
   if (isOnPageAnchor(url)) return false;
   return findProtocol(url) === '' && url.substring(0, 1) !== '/';
 }
@@ -63,6 +65,7 @@ function cleanPath(url: string) {
 }
 
 function findPath(url: string): string {
+  if (url === '') return '';
   if (isOnPageAnchor(url)) return '';
   let output = removeDomain(url);
   output = removeAnchor(output);
@@ -102,6 +105,7 @@ function findFileType(url: string): string {
 }
 
 function isRoot(url: string): boolean {
+  if (url === '') return false;
   if (isOnPageAnchor(url)) return false;
   let bare = removeDomain(url);
   bare = removeAnchor(bare);
@@ -128,6 +132,7 @@ function formatExternalLink(url: string): string {
 }
 
 function formatLink(url: string, domain: string, current: string): string {
+  if (url === '') return '';
   if (isOnPageAnchor(url)) return '';
   if (!isInternal(url, domain)) return formatExternalLink(url);
 
@@ -151,4 +156,10 @@ export default {
   findDomain,
   cleanLink: formatLink,
   findPath,
+  isOnPageAnchor,
+  findFileName,
+  isRelativeToPage,
+  isRelativeToRoot,
+  formatLink,
+  isRoot,
 };
