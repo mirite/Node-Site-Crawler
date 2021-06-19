@@ -22,8 +22,8 @@ export default async function request(url: string): Promise<PageResponse> {
     };
   } catch (err) {
     pageResponse = {
-      body: err.response.data,
-      code: err.response.status,
+      body: '',
+      code: 0,
       isError: true,
     };
   }
