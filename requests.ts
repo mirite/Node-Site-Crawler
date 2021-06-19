@@ -6,7 +6,7 @@ type PageResponse = {
   isError: boolean,
 }
 
-function isErrorCode(code:number):boolean {
+export function isErrorCode(code:number):boolean {
   return code > 399 && code !== 999;
 }
 
