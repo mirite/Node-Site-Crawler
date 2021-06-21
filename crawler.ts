@@ -2,6 +2,8 @@ import fs from 'fs';
 import EventEmitter from 'events';
 import Page from './pages';
 
+export { default as Page } from './pages';
+
 export type Status = {
     pagesCrawled: number,
     currentPage: string,
