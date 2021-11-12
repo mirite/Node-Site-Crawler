@@ -51,6 +51,12 @@ function removeAnchor(url: string): string {
   return output;
 }
 
+function removeSlashCode(url: string): string {
+	if (!url.includes('%2f')) return url;
+	const output = url.substring(0, url.indexOf('%2f'));
+	return output;
+  }
+
 function endURL(url: string): string {
   if (!url.includes('.') && url.substring(url.length - 1) !== '/') return `${url}/`;
   return url;
@@ -60,7 +66,8 @@ function cleanPath(url: string) {
   let cleanedURL = url;
   cleanedURL = endURL(cleanedURL);
   cleanedURL = stripDoubles(cleanedURL);
-  cleanedURL = removeAnchor(cleanedURL);
+	cleanedURL = removeAnchor(cleanedURL);
+	cleanedURL = removeSlashCode(cleanedURL);
   return cleanedURL;
 }
 
