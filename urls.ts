@@ -54,6 +54,7 @@ function removeAnchor(url: string): string {
 function removeSlashCode(url: string): string {
   if (!url.includes('%2f')) return url;
   const output = url.substring(0, url.indexOf('%2f'));
+  if (output.includes('%2f')) return removeSlashCode(output);
   return output;
 }
 
@@ -169,4 +170,5 @@ export default {
   isRelativeToRoot,
   formatLink,
   isRoot,
+  removeSlashCode,
 };

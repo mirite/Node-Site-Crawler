@@ -752,6 +752,15 @@ const testStrings: Array<TestGroup> = [
       },
     ],
   },
+  {
+    input: 'https://jesseconner.ca/fc/?s%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f%2f/',
+    tests: [
+      {
+        function: urls.removeSlashCode,
+        expected: 'https://jesseconner.ca/fc/?s',
+      },
+    ],
+  },
 ];
 
 testStrings.forEach((group) => {
