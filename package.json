@@ -26,7 +26,7 @@
 	"homepage": "https://github.com/mirite/Node-Site-Crawler#readme",
 	"dependencies": {
 		"@babel/core": "^7.17.8",
-		"@babel/preset-env": "^7.16.8",
+		"@babel/preset-env": "^7.17.10",
 		"@babel/preset-typescript": "^7.16.7",
 		"axios": "^0.26.1",
 		"jsdom": "^19.0.0",
