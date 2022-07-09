@@ -6,7 +6,7 @@
 	"scripts": {
 		"build": "tsc",
 		"test": "jest",
-		"lint": "eslint *.ts --fix"
+		"lint": "eslint src/**/*.ts --fix"
 	},
 	"repository": {
 		"type": "git",
