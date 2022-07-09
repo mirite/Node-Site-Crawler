@@ -1,4 +1,4 @@
-import request, { isErrorCode } from '../requests';
+import request, { isErrorCode } from '../src/requests';
 
 test('intentional404.php returns status code 404', async () => {
   const response = await (request('https://github.com/intentional404'));

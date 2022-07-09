@@ -4,7 +4,7 @@
 	"description": "A simple node module to crawl a domain and generate a page list. ",
 	"main": "dist/crawler.js",
 	"scripts": {
-		"start": "tsc && node dist/crawler.js",
+		"build": "tsc",
 		"test": "jest",
 		"lint": "eslint *.ts --fix"
 	},

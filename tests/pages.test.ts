@@ -1,4 +1,4 @@
-import Page from '../pages';
+import Page from '../src/pages';
 
 test('All external links found', async () => {
   const page = new Page('https://jesseconner.ca/', 'jesseconner.ca');
