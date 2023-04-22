@@ -1,4 +1,4 @@
-import { Crawler } from '../crawler';
+import { Crawler } from '..';
 test('Found all pages', async () => {
   jest.setTimeout(30000);
 
