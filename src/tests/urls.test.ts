@@ -1,4 +1,4 @@
-import urls from '../src/urls';
+import urls from '../urls';
 
 type Test = {
 

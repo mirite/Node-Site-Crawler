@@ -1,4 +1,4 @@
-import links from '../src/links';
+import links from '../links';
 
 type ArrayTest = {
 
