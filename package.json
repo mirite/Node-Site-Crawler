@@ -7,7 +7,8 @@
 	"scripts": {
 		"build": "tsc",
 		"test": "jest",
-		"lint": "eslint src/**/*.ts --fix"
+		"lint": "eslint src/**/*.ts --fix",
+		"release": "yarn build && npm publish"
 	},
 	"repository": {
 		"type": "git",
