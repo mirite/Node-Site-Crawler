@@ -1,5 +1,5 @@
 import links from "../src/links";
-import {test, expect} from 'vitest';
+import { test, expect } from "vitest";
 
 type ArrayTest = {
 	function: (url: string) => Array<string | boolean>;

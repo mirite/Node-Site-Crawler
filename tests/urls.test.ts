@@ -1,5 +1,5 @@
 import urls from "../src/urls";
-import {test, expect} from 'vitest';
+import { test, expect } from "vitest";
 
 type Test = {
 	function: (url: string) => string | boolean;

@@ -1,5 +1,5 @@
 import Page from "../src/pages";
-import {test, expect} from 'vitest';
+import { test, expect } from "vitest";
 
 test("All external links found", async () => {
 	const page = new Page("https://jesseconner.ca/", "jesseconner.ca");
