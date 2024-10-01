@@ -30,7 +30,7 @@
 	"dependencies": {
 		"axios": "^1.7.3",
 		"jsdom": "^24.1.1",
-		"typescript": "^5.5.4"
+		"typescript": "^5.6.2"
 	},
 	"devDependencies": {
 		"@mirite/eslint-config-mirite": "^0.0.4",
