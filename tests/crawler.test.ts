@@ -1,5 +1,6 @@
-import { Crawler } from "../src";
 import { test, expect } from "vitest";
+
+import { Crawler } from "../src";
 
 test("Found all pages", async () => {
 	const crawler = new Crawler("jesseconner.ca");
