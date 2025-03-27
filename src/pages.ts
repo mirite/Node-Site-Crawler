@@ -1,5 +1,5 @@
-import LinkFinder from "./links";
 import Request from "./requests";
+import LinkFinder from "./links";
 
 export default class Page {
 	target: string;

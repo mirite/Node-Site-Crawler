@@ -20,7 +20,11 @@ export class Crawler {
 
 	domain: string;
 
-	/** @param domain */
+	/**
+	 * Instantiate the crawler.
+	 *
+	 * @param domain The domain to crawl
+	 */
 	constructor(domain: string) {
 		this.events = new EventEmitter();
 		this.domain = domain;
